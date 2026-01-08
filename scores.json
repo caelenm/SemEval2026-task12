@@ -1,0 +1,134 @@
+[
+    {
+        "outfile_name": "out_2025-12-10_14-18-04_Mistral-Nemo-12B-Instruct-2407",
+        "score": 97.5,
+        "total": 200,
+        "percent_correct": 0.4875
+    },
+    {
+        "outfile_name": "out_2025-12-10_14-18-04_Meta-Llama-3-1-8B-Instruct-FP8",
+        "score": 95.0,
+        "total": 200,
+        "percent_correct": 0.475
+    },
+    {
+        "outfile_name": "out_2025-12-10_17-38-16_gemma-3-27b-it",
+        "score": 113.5,
+        "total": 200,
+        "percent_correct": 0.5675
+    },
+    {
+        "outfile_name": "out_2025-12-10_18-08-39_qwen3-coder",
+        "score": 145.5,
+        "total": 200,
+        "percent_correct": 0.7275
+    },
+    {
+        "outfile_name": "out_2025-12-10_18-08-39_grok-4-fast",
+        "score": 144.5,
+        "total": 200,
+        "percent_correct": 0.7225
+    },
+    {
+        "outfile_name": "out_2025-12-14_14-45-29_gpt-oss-20b",
+        "score": 131.5,
+        "total": 200,
+        "percent_correct": 0.6575
+    },
+    {
+        "outfile_name": "out_2025-12-14_15-21-04_gpt-oss-20b",
+        "score": 100.0,
+        "total": 200,
+        "percent_correct": 0.5
+    },
+    {
+        "outfile_name": "out_2025-12-14_15-21-14_gpt-oss-20b",
+        "score": 100.0,
+        "total": 200,
+        "percent_correct": 0.5
+    },
+    {
+        "outfile_name": "out_2025-12-14_18-40-04_Meta-Llama-3-1-8B-Instruct-FP8",
+        "score": 90.5,
+        "total": 200,
+        "percent_correct": 0.4525
+    },
+    {
+        "outfile_name": "out_2026-01-06_15-44-51_llama-3.2-3b-instruct_1sim",
+        "score": 85.5,
+        "total": 200,
+        "percent_correct": 0.4275
+    },
+    {
+        "outfile_name": "out_2026-01-07_00-04-09_grok-4.1-fast_1sim",
+        "score": 148.5,
+        "total": 200,
+        "percent_correct": 0.7425
+    },
+    {
+        "outfile_name": "out_2026-01-07_10-18-45_gemini-2.5-flash-lite-preview-09-2025_0sim",
+        "score": 136.5,
+        "total": 200,
+        "percent_correct": 0.6825
+    },
+    {
+        "outfile_name": "out_2026-01-07_10-48-28_gemini-2.5-flash-lite-preview-09-2025_0sim_1cot",
+        "score": 139.0,
+        "total": 200,
+        "percent_correct": 0.695
+    },
+    {
+        "outfile_name": "out_2026-01-07_10-18-45_gemini-2.5-flash-lite-preview-09-2025_1sim",
+        "score": 136.5,
+        "total": 200,
+        "percent_correct": 0.6825
+    },
+    {
+        "outfile_name": "out_2026-01-07_10-48-28_gemini-2.5-flash-lite-preview-09-2025_0sim",
+        "score": 139.0,
+        "total": 200,
+        "percent_correct": 0.695
+    },
+    {
+        "outfile_name": "out_2026-01-07_11-10-12_gpt-oss-20b_0sim_1cot",
+        "score": 116.0,
+        "total": 200,
+        "percent_correct": 0.58
+    },
+    {
+        "outfile_name": "out_2026-01-07_12-42-12_gpt-oss-20b_1sim_1cot_small",
+        "score": 119.0,
+        "total": 200,
+        "percent_correct": 0.595
+    },
+    {
+        "outfile_name": "out_2026-01-07_12-42-12_gpt-oss-20b_1sim_1cot",
+        "score": 119.0,
+        "total": 200,
+        "percent_correct": 0.595
+    },
+    {
+        "outfile_name": "out_2026-01-07_13-13-31_grok-4.1-fast_1sim_1cot_small",
+        "score": 148.0,
+        "total": 200,
+        "percent_correct": 0.74
+    },
+    {
+        "outfile_name": "out_2026-01-08_00-22-44_gpt-5-nano_3sim_1cot_large",
+        "score": 124.5,
+        "total": 200,
+        "percent_correct": 0.6225
+    },
+    {
+        "outfile_name": "out_2026-01-08_00-22-44_gemini-2.5-flash-lite-preview-09-2025-thinking_3sim_1cot_large",
+        "score": 100.5,
+        "total": 200,
+        "percent_correct": 0.5025
+    },
+    {
+        "outfile_name": "out_2026-01-08_00-22-44_grok-4.1-fast_3sim_1cot_large",
+        "score": 100.5,
+        "total": 200,
+        "percent_correct": 0.5025
+    }
+]
