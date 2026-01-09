@@ -51,10 +51,10 @@ def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k):
     # embed question
     question_embed = model.generate_content(question)
     try:
-        question_embed = json.loads(question_embed.text)
+        #question_embed = json.loads(question_embed.text)
         question_embedding = question_embed['data'][0]['embedding']
             
-    except (json.JSONDecodeError, KeyError, IndexError) as e:
+    except (KeyError, IndexError) as e: 
         print(f"Error parsing API response: {e}")
         return 'NULL'
 
@@ -71,11 +71,10 @@ def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k):
             
 
             try:
-                title_embed = json.loads(title_embed.text)
                 title_embeddings.append(title_embed['data'][0]['embedding'])
                 seen_topics_dict[topic] = title_embeddings
                 
-            except (json.JSONDecodeError, KeyError, IndexError) as e:
+            except (KeyError, IndexError) as e:
                 print(f"Error parsing API response: {e}")
                 continue
         print("embeddings done")

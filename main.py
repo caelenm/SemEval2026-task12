@@ -3,6 +3,8 @@ import subprocess
 import sys
 from dedup import deduplicate_scores
 
+#ensure you run $ ollama serve
+
 def run_script(path):
     result = subprocess.run([sys.executable, path], check=False)
     if result.returncode != 0:

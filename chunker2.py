@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import List, Tuple
 import nltk
 from nltk.tokenize import sent_tokenize
-from callOllama import callOllama
+from callOllamaEfficiently import callOllama
 from sklearn.metrics.pairwise import cosine_similarity
 
 

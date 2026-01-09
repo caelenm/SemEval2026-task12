@@ -2,7 +2,11 @@ import subprocess
 import json
 
 # --- CONFIGURATION ---
-APIKEY = "" # <--- PUT YOUR KEY HERE
+with open("/var/home/user/.apikeys/nano-gpt.txt", "r") as f:
+    first_line = f.readline().strip()
+    APIKEY = first_line
+
+#APIKEY = "" # <--- OR PUT YOUR KEY HERE
 # ---------------------
 
 def call_paid_api(model_name, type, prompt):
@@ -55,4 +59,13 @@ class Model:
         self.type = type
 
     def generate_content(self, input_text):
-        return call_paid_api(self.model_name,self.type, input_text)
+        # Call the API and parse the raw response
+        raw = call_paid_api(self.model_name, self.type, input_text)
+        try:
+            response_json = json.loads(raw.text)  # Parse the JSON response
+            #print("RAW TEXT:", raw.text)  # Print raw text for debugging
+            #print("JSON PARSED:", response_json)  # Print parsed JSON for debugging
+            return response_json
+        except json.JSONDecodeError as e:
+            print(f"Error parsing API response: {e}. Raw response: {raw.text}")
+            return {"error": "Invalid JSON"}

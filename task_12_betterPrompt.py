@@ -6,7 +6,7 @@ import time
 import subprocess
 from pathlib import Path
 from model import Model
-from getDocsLocal import getRelevantDocs
+
 from chunker2 import chunker
 import datetime
 current_time = datetime.datetime.now()
@@ -16,9 +16,9 @@ formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 #Important variables
 #==================
 COT = 1 #binary variable
-k=3 # number of similar documents
-size = "large" #size of qwen embedding model, small =0.6b, large = 8b
-local = 1 #binary check if using getDocs or getDocsLocal
+k=1 # number of similar documents
+size = "small" #size of qwen embedding model, small =0.6b, large = 8b
+local = 0 #binary check if using getDocs or getDocsLocal
 
 def manage_dependencies():
     """
@@ -57,7 +57,8 @@ def manage_dependencies():
 
 
 # LLM setup
-models = ["openai/gpt-5-nano","gemini-2.5-flash-lite-preview-09-2025-thinking", "x-ai/grok-4.1-fast"]
+#models = ["openai/gpt-5-nano","gemini-2.5-flash-lite-preview-09-2025-thinking", "x-ai/grok-4.1-fast"] #main
+models = ["gemini-2.5-flash-lite-preview-09-2025-thinking"] #test
 seen_topics_dict = {}
 def generate_llm_prediction(question_data, topic_docs, model):
     """
@@ -71,8 +72,10 @@ def generate_llm_prediction(question_data, topic_docs, model):
     seen_topics_dict = {}
     chunkedDocs = []
     if local == 1:
-        rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k,"small")
+        from getDocsLocal import getRelevantDocs
+        rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k,size)
     else: 
+        from getDocs import getRelevantDocs
         rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k)
     if rel_docs is not None and len(rel_docs) > 0:
         for i in range(len(rel_docs)):
@@ -90,6 +93,28 @@ def generate_llm_prediction(question_data, topic_docs, model):
     print(type(RelevantDocs))
      # take most useful doc, get most useful lines
     # Construct the prompt
+
+    if COT == 1: # it has been noted that chain of thought prompting can confuse smaller parameter models
+        ChainOfThoughtPrompt = f"Instructions:\
+        1. Restate the target event in your own words in one sentence.\
+    \
+        2. For each option (A, B, C, D), do:\
+        - Briefly explain how this option could cause the target event.\
+        - Cite at least two specific facts or sentences from the Relevant Documents that support this option, if any.\
+        - Point out any contradictions or missing links with the Relevant Documents.\
+        - Give this option a plausibility score from 0 to 1.\
+    \
+        3. Compare the four options and:\
+        - Identify which option(s) provide the most direct, well-supported explanation with the fewest extra assumptions.\
+        - If multiple options are plausible and not mutually exclusive, you may select more than one.\
+    \
+        4. Think again:\
+        - For the best option(s), briefly check if there is a strong reason they might be wrong given the documents.\
+        - If you find a serious problem, adjust your choice."
+    else:
+        ChainOfThoughtPrompt = ""
+
+
     prompt = f"""
     You are an expert cause-effect analyst. Analyze the following documents and answer the question.
 
@@ -110,26 +135,12 @@ def generate_llm_prediction(question_data, topic_docs, model):
     {"\n".join(chunkedDocs)}
     "
      ---
+
+     {ChainOfThoughtPrompt}
     
     Evaluation: Based on the information provided, select ANY OF (A, B, C, or D) that best explains the cause. you will get 1 point for an exactly correct guess (perfect match, e.g. guess A,C = answer A,C), 0.5 points for a partially correct guess
     (one or more matching letter. e.g. guess A , but correct was A, B, C), and zero points for no match. 
      ---
-    Instructions:
-    1. Restate the target event in your own words in one sentence.
-
-    2. For each option (A, B, C, D), do:
-    - Briefly explain how this option could cause the target event.
-    - Cite at least two specific facts or sentences from the Relevant Documents that support this option, if any.
-    - Point out any contradictions or missing links with the Relevant Documents.
-    - Give this option a plausibility score from 0 to 1.
-
-    3. Compare the four options and:
-    - Identify which option(s) provide the most direct, well-supported explanation with the fewest extra assumptions.
-    - If multiple options are plausible and not mutually exclusive, you may select more than one.
-
-    4. Think again:
-    - For the best option(s), briefly check if there is a strong reason they might be wrong given the documents.
-    - If you find a serious problem, adjust your choice.
 
 Requirement: After completing your reasoning, output strictly ONLY the letters you predict, separated by commas, with no spaces and no other text.
 
@@ -140,32 +151,37 @@ Requirement: After completing your reasoning, output strictly ONLY the letters y
         #time.sleep(4)
         response = model.generate_content(prompt)
         
+        
         # Parse the JSON response
         try:
             response_json = json.loads(response.text)
             # Extract the assistant's message content
             raw_output = response_json['choices'][0]['message']['content'].strip().upper()
+
+            matches = re.findall(r'\b[ABCD]\b', raw_output)
+        
+            # Remove duplicates and sort 
+            unique_matches = sorted(list(set(matches)))
+            
+            if unique_matches:
+                return ", ".join(unique_matches)
+
+
+            print(f"Warning: API output '{raw_output}' unclear. Defaulting to All.")
+            return 'A, B, C, D'
+
+            
         except (json.JSONDecodeError, KeyError, IndexError) as e:
             print(f"Error parsing API response: {e}")
             return 'A, B, C, D'
 
 
        
-        print(raw_output)
-        matches = re.findall(r'\b[ABCD]\b', raw_output)
         
-        # Remove duplicates and sort 
-        unique_matches = sorted(list(set(matches)))
         
-        if unique_matches:
-            return ", ".join(unique_matches)
-
-
-        print(f"Warning: API output '{raw_output}' unclear. Defaulting to All.")
-        return 'A, B, C, D'
-
 
     except Exception as e:
+
         print(f"Error during API call: {e}. Defaulting to All.")
         return 'A, B, C, D'
 

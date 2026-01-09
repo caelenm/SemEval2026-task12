@@ -9,7 +9,7 @@ from model import Model
 from collections import OrderedDict
 import sys
 from model import Model
-from callOllama import callOllama
+from callOllamaEfficiently import callOllama
 
 def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k, size):
 
@@ -76,6 +76,7 @@ def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k, size):
 
     
     # compare question and title(s)
+
     scores = [cosine_similarity([question_embedding], [t])[0][0] for t in title_embeddings]
     k_similar = [doc for doc, _ in sorted(zip(matching_topic['docs'], scores), key=lambda x: x[1], reverse=True)[:k]]
 

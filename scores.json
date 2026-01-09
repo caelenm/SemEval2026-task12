@@ -118,17 +118,6 @@
         "score": 124.5,
         "total": 200,
         "percent_correct": 0.6225
-    },
-    {
-        "outfile_name": "out_2026-01-08_00-22-44_gemini-2.5-flash-lite-preview-09-2025-thinking_3sim_1cot_large",
-        "score": 100.5,
-        "total": 200,
-        "percent_correct": 0.5025
-    },
-    {
-        "outfile_name": "out_2026-01-08_00-22-44_grok-4.1-fast_3sim_1cot_large",
-        "score": 100.5,
-        "total": 200,
-        "percent_correct": 0.5025
     }
+    
 ]
