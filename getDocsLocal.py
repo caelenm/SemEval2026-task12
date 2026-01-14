@@ -49,10 +49,10 @@ def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k, size):
     # embed question
     question_embedding = callOllama(size, question)
 
-    #embed title        #Change this to only run once on new topic
+    #embed title        
 
 
-    
+    #not sure yet if caching works
     if topic not in seen_topics_dict:
         print("Starting embeddings...")
         title_embeddings = []

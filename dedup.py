@@ -31,7 +31,7 @@ def deduplicate_scores(input_path):
         if 'outfile_name' in item
     }
 
-    # Convert back to list and sort (optional, for consistency)
+    # Convert back to list and sort 
     cleaned_data = list(unique_scores.values())
     
     # Save back to file

@@ -2,10 +2,12 @@ import json
 import re
 
 from model import Model  # Assuming your `Model` class is defined in `model.py`
-
+"""
+this is solely to confirm the api is working
+"""
 def test_model_api():
     # Define the model name to test
-    model_name = "Meta-Llama-3-1-8B-Instruct-FP8"  # Replace with desired model name
+    model_name = "Meta-Llama-3-1-8B-Instruct-FP8"  
     try:
         print(f"Initializing model: {model_name}")
         model = Model(model_name, "chat")  # Initialize the model

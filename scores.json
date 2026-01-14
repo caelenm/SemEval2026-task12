@@ -118,6 +118,59 @@
         "score": 124.5,
         "total": 200,
         "percent_correct": 0.6225
+    },
+    {
+        "outfile_name": "out_2026-01-08_00-22-44_gemini-2.5-flash-lite-preview-09-2025-thinking_3sim_1cot_large",
+        "score": 100.5,
+        "total": 200,
+        "percent_correct": 0.5025
+    },
+    {
+        "outfile_name": "out_2026-01-08_00-22-44_grok-4.1-fast_3sim_1cot_large",
+        "score": 100.5,
+        "total": 200,
+        "percent_correct": 0.5025
+    },
+    {
+        "outfile_name": "out_2026-01-09_00-00-41_gemini-2.5-flash-lite-preview-09-2025-thinking_1sim_1cot_large",
+        "score": 132.0,
+        "total": 200,
+        "percent_correct": 0.66
+    },
+    {
+        "outfile_name": "out_2026-01-09_00-00-41_gemini-2.5-flash-lite-preview-09-2025-thinking_1sim_1cot_small",
+        "score": 132.0,
+        "total": 200,
+        "percent_correct": 0.66
+    },
+    {
+        "outfile_name": "out_2026-01-09_12-38-27_llama-3.1-8b-instruct_1sim_0cot_large_Local",
+        "score": 94.0,
+        "total": 200,
+        "percent_correct": 0.47
+    },
+    {
+        "outfile_name": "out_2026-01-09_12-38-27_gpt-oss-20b_1sim_0cot_large_Local",
+        "score": 109.0,
+        "total": 200,
+        "percent_correct": 0.545
+    },
+    {
+        "outfile_name": "out_2026-01-09_12-38-27_gemma-3-4b-it_1sim_0cot_large_Local",
+        "score": 86.5,
+        "total": 200,
+        "percent_correct": 0.4325
+    },
+    {
+        "outfile_name": "out_2026-01-09_12-38-27_grok-4.1-fast_1sim_0cot_large_Local",
+        "score": 152.0,
+        "total": 200,
+        "percent_correct": 0.76
+    },
+    {
+        "outfile_name": "out_2026-01-10_11-22-58_grok-4.1-fast_1sim_1cot_large_Local",
+        "score": 147.0,
+        "total": 200,
+        "percent_correct": 0.735
     }
-    
 ]

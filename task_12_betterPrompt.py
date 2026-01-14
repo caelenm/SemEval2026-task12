@@ -6,6 +6,8 @@ import time
 import subprocess
 from pathlib import Path
 from model import Model
+from parseResponse import parse_llm_response
+
 
 from chunker2 import chunker
 import datetime
@@ -17,8 +19,8 @@ formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 #==================
 COT = 1 #binary variable
 k=1 # number of similar documents
-size = "small" #size of qwen embedding model, small =0.6b, large = 8b
-local = 0 #binary check if using getDocs or getDocsLocal
+size = "large" #size of qwen embedding model, small =0.6b, large = 8b
+local = 1 #binary check if using getDocs or getDocsLocal
 
 def manage_dependencies():
     """
@@ -57,8 +59,8 @@ def manage_dependencies():
 
 
 # LLM setup
-#models = ["openai/gpt-5-nano","gemini-2.5-flash-lite-preview-09-2025-thinking", "x-ai/grok-4.1-fast"] #main
-models = ["gemini-2.5-flash-lite-preview-09-2025-thinking"] #test
+models = ["x-ai/grok-4.1-fast"] #main
+#models = ["gemini-2.5-flash-lite-preview-09-2025-thinking"] #test
 seen_topics_dict = {}
 def generate_llm_prediction(question_data, topic_docs, model):
     """
@@ -76,7 +78,7 @@ def generate_llm_prediction(question_data, topic_docs, model):
         rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k,size)
     else: 
         from getDocs import getRelevantDocs
-        rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k)
+        rel_docs, seen_topics_dict = getRelevantDocs(docs_data,question_data['target_event'],question_data['topic_id'], seen_topics_dict, k)
     if rel_docs is not None and len(rel_docs) > 0:
         for i in range(len(rel_docs)):
             RelevantDocs = rel_docs[i]['title'] + "\n\n" + rel_docs[i]['content'] #include title and content, both useful
@@ -137,41 +139,36 @@ def generate_llm_prediction(question_data, topic_docs, model):
      ---
 
      {ChainOfThoughtPrompt}
-    
+
+    Note: The documents do not necessarily contain the answer to the question, they are just potentially relevant context.
     Evaluation: Based on the information provided, select ANY OF (A, B, C, or D) that best explains the cause. you will get 1 point for an exactly correct guess (perfect match, e.g. guess A,C = answer A,C), 0.5 points for a partially correct guess
     (one or more matching letter. e.g. guess A , but correct was A, B, C), and zero points for no match. 
      ---
 
-Requirement: After completing your reasoning, output strictly ONLY the letters you predict, separated by commas, with no spaces and no other text.
-
+    Requirement: After completing your reasoning, you must output the final answer on the very last line, prefixed with "FINAL ANSWER:".
     """     #generate-evaluate loop https://arxiv.org/html/2509.24096v1
     print(prompt)
         # 2. Call the API
     try:
         #time.sleep(4)
         response = model.generate_content(prompt)
-        
+        response_json = response
         
         # Parse the JSON response
         try:
-            response_json = json.loads(response.text)
-            # Extract the assistant's message content
-            raw_output = response_json['choices'][0]['message']['content'].strip().upper()
-
-            matches = re.findall(r'\b[ABCD]\b', raw_output)
-        
-            # Remove duplicates and sort 
-            unique_matches = sorted(list(set(matches)))
+            # Use the external parsing logic
+            parsed_answer = parse_llm_response(response_json)
             
-            if unique_matches:
-                return ", ".join(unique_matches)
+            if parsed_answer:
+                return parsed_answer
+                
 
 
             print(f"Warning: API output '{raw_output}' unclear. Defaulting to All.")
             return 'A, B, C, D'
 
             
-        except (json.JSONDecodeError, KeyError, IndexError) as e:
+        except (AttributeError, KeyError, IndexError) as e:
             print(f"Error parsing API response: {e}")
             return 'A, B, C, D'
 
@@ -232,6 +229,9 @@ def iterate_over_dataset(questions, docs, model):
 
 dataset_file = "questions.jsonl"
 docs_file = "docs.json"
+import json
+with open('docs.json', 'r') as f:
+    docs_data = json.load(f)
 
 
 # Check if files exist
@@ -265,9 +265,22 @@ for i in models:
         m = model_name.split('/')[1]
     else: 
         m = i
-        
-    filename = f"out_{formatted_time}_{m}_{k}sim_{COT}cot_{size}.json"
+
+    if local == 1:    
+        filename = f"out_{formatted_time}_{m}_{k}sim_{COT}cot_{size}_Local.json"
+    else:
+        filename = f"out_{formatted_time}_{m}_{k}sim_{COT}cot_large_Online.json"
     final_path = outfiles / filename  
+
+    """
+    where formatted_time is the current time
+    m is the model name used during api call
+    k is the number of similar documents included for RAG
+    COT is whether or not the chain of thought prompt is used
+    large/small is the size of the document embedding model
+    Local/Online is Ollama or API for embedding
+
+    """
     
     print("output file: ", final_path)
     print(f"Task {task} of {tasks} running...")
@@ -277,7 +290,7 @@ for i in models:
     print(f"Writing {len(predictions)} predictions to {final_path}")
     
     with final_path.open('w', encoding='utf-8') as f:
-        json.dump(predictions, f, indent=4)
+        json.dump(predictions, f, indent=4) #writes score after each model completion
         
     task += 1
 
