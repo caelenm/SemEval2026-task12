@@ -17,7 +17,7 @@ formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 #===============
 #Important variables
 #==================
-COT = 1 #binary variable
+COT = 0 #binary variable
 k=1 # number of similar documents
 size = "large" #size of qwen embedding model, small =0.6b, large = 8b
 local = 1 #binary check if using getDocs or getDocsLocal
@@ -58,8 +58,40 @@ def manage_dependencies():
 
 
 
+# --- File Loading ---
+prepend = "/var/home/user/Code/SemEval2026-task12/semeval2026-task12-dataset/dev_data/"
+#dataset_file = "questions.jsonl" #change to dev set
+#docs_file = "docs.json"
+
+dataset_file = prepend + "questions.jsonl"
+docs_file = prepend + "docs.json"
+print("Dataset File: ", dataset_file)
+import json
+with open('docs.json', 'r') as f:
+    docs_data = json.load(f)
+
+
+# Check if files exist
+if not os.path.exists(dataset_file) or not os.path.exists(docs_file):
+    print(f"Error: Ensure '{dataset_file}' and '{docs_file}' are in the directory.")
+    sys.exit(1)
+
+try:
+    with open(dataset_file, encoding='utf-8') as f:
+        questions_lines = f.readlines()
+    with open(docs_file, 'r', encoding='utf-8') as f:
+        docs = json.load(f)
+
+except Exception as e:
+    print(f"Error reading files: {e}")
+    sys.exit(1)
+
+
+
+
+
 # LLM setup
-models = ["x-ai/grok-4.1-fast"] #main
+models = ["azure-gpt-4o-mini","x-ai/grok-4.1-fast"] #main
 #models = ["gemini-2.5-flash-lite-preview-09-2025-thinking"] #test
 seen_topics_dict = {}
 def generate_llm_prediction(question_data, topic_docs, model):
@@ -74,11 +106,11 @@ def generate_llm_prediction(question_data, topic_docs, model):
     seen_topics_dict = {}
     chunkedDocs = []
     if local == 1:
-        from getDocsLocal import getRelevantDocs
-        rel_docs, seen_topics_dict = getRelevantDocs('docs.json',question_data['target_event'],question_data['topic_id'], seen_topics_dict, k,size)
+        from getDocsLocal import getRelevantDocs #if error line 78, then ollama not running
+        rel_docs, seen_topics_dict = getRelevantDocs(docs_file,question_data['target_event'],question_data['topic_id'], seen_topics_dict, k,size)
     else: 
         from getDocs import getRelevantDocs
-        rel_docs, seen_topics_dict = getRelevantDocs(docs_data,question_data['target_event'],question_data['topic_id'], seen_topics_dict, k)
+        rel_docs, seen_topics_dict = getRelevantDocs(docs_file,question_data['target_event'],question_data['topic_id'], seen_topics_dict, k)
     if rel_docs is not None and len(rel_docs) > 0:
         for i in range(len(rel_docs)):
             RelevantDocs = rel_docs[i]['title'] + "\n\n" + rel_docs[i]['content'] #include title and content, both useful
@@ -225,29 +257,6 @@ def iterate_over_dataset(questions, docs, model):
     return preds
 
 
-# --- File Loading ---
-
-dataset_file = "questions.jsonl"
-docs_file = "docs.json"
-import json
-with open('docs.json', 'r') as f:
-    docs_data = json.load(f)
-
-
-# Check if files exist
-if not os.path.exists(dataset_file) or not os.path.exists(docs_file):
-    print(f"Error: Ensure '{dataset_file}' and '{docs_file}' are in the directory.")
-    sys.exit(1)
-
-try:
-    with open(dataset_file, encoding='utf-8') as f:
-        questions_lines = f.readlines()
-    with open(docs_file, 'r', encoding='utf-8') as f:
-        docs = json.load(f)
-
-except Exception as e:
-    print(f"Error reading files: {e}")
-    sys.exit(1)
 
 # *** RUN ***
 

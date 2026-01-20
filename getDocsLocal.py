@@ -39,17 +39,25 @@ def getRelevantDocs(docs_file, question, topic, seen_topics_dict, k, size):
     snippets = []
     content = []
     matching_topic = next((block for block in data if block["topic_id"] == topic), None)
+    if matching_topic is None:
+        print(f"[WARN] No matching topic for topic_id={topic}")
+        # Return no docs but keep cache unchanged
+        return [], seen_topics_dict
+
     for doc in matching_topic['docs']:
-        titles.append(doc['title'])
-        links.append(doc['link'])
-        snippets.append(doc['snippet'])
-        content.append(doc['content'])
+        titles.append(doc.get('title', ''))
+        links.append(doc.get('link', ''))
+        snippets.append(doc.get('snippet', '')) 
+        content.append(doc.get('content', ''))
+
     
     
     # embed question
     question_embedding = callOllama(size, question)
 
     #embed title        
+
+   
 
 
     #not sure yet if caching works

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 # Load questions once (efficient)
-questions_path = Path("/var/home/user/Code/SemEval2026-task12/semeval2026-task12-dataset/sample_data/questions.jsonl")
+questions_path = Path("/var/home/user/Code/SemEval2026-task12/semeval2026-task12-dataset/dev_data/questions.jsonl")
 questions = []
 try:
     with questions_path.open("r", encoding="utf-8") as f:
@@ -22,7 +22,7 @@ def full_match(result, golden_answer):
     return sorted(result) == sorted(golden_answer)
 
 # Setup directory and list to hold all scores
-outfiles_dir = Path("/var/home/user/Code/SemEval2026-task12/semeval2026-task12-dataset/sample_data/outfiles")
+outfiles_dir = Path("/var/home/user/Code/SemEval2026-task12/semeval2026-task12-dataset/dev_data/outfiles")
 all_scores = []
 
 if not outfiles_dir.exists():

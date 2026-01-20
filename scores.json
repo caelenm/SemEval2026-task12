@@ -172,5 +172,17 @@
         "score": 147.0,
         "total": 200,
         "percent_correct": 0.735
+    },
+    {
+        "outfile_name": "out_2026-01-19_22-47-46_azure-gpt-4o-mini_1sim_0cot_large_Local",
+        "score": 0,
+        "total": 200,
+        "percent_correct": 0.0
+    },
+    {
+        "outfile_name": "out_2026-01-19_22-47-46_grok-4.1-fast_1sim_0cot_large_Local",
+        "score": 0,
+        "total": 200,
+        "percent_correct": 0.0
     }
 ]
